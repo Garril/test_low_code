@@ -8,7 +8,8 @@ export default {
   render (h, section, children) {
     const _this = this;
     // console.log(_this)
-
+    
+    // _prpos和_propsOn业务量大可能考虑再抽象
     // 从上到下
     const _props = {
       props: {

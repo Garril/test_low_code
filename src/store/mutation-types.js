@@ -1,0 +1,1 @@
+export const SET_CONFIG_POS = 'set_config_pos'

@@ -13,6 +13,17 @@ export default {
           e.stopPropagation();
           _this.$emit('pickType', 'cInput')
         }
+      },
+      on: {
+        viewMounted: e => {
+          // 拿到对应的input节点，用_uid来索引
+          this.$store.dispatch("addConfigPos",{
+            id: e._uid,
+            pos: e.value
+          }).then(res => {
+            console.log(res)
+          })
+        }
       }
     }
     return (
