@@ -13,8 +13,10 @@ const req = import.meta.globEager('./*.vue')
 const reqParser = import.meta.globEager('./*.js')
 */
 const req = require.context('./', false, /[^.]+\.vue/)
-const reqParser = require.context('./', false, /parser-[^.]+\.js/)
-
+/* return一个函数
+    ƒ webpackContext(req) {
+      return __webpack_require__(webpackContextResolve(req));
+    }  */
 const componentsName = req.keys();
 const components = componentsName.reduce((components, module) => {
   // 把组件捞出来，再做个回挂
@@ -25,6 +27,8 @@ const components = componentsName.reduce((components, module) => {
 
 // parser-xxx代表每个组件的逻辑层 ---包了一层逻辑层，用组件去包的话，会多出一层dom
 // 可以用于处理：需要对中间传参所做的参数
+const reqParser = require.context('./', false, /parser-[^.]+\.js/)
+
 const parsersName = reqParser.keys();
 const parsers = parsersName.reduce((parsers, module) => {
   const mod = reqParser(module)

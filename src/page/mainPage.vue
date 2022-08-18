@@ -30,8 +30,8 @@
           >
           <!-- bug：别drop.stop 让事件往下传 -->
             <render-engine ref="engine" 
-              :jsonSchema="currentJson"
-              :addNode="selectedType"
+              :jsonSchema="currentJson" :addNode="selectedType"
+              @pickType="handlePickType"
             ></render-engine>
 
             <!-- <li v-for="(item, index) in components" :key="index">
@@ -47,6 +47,7 @@
             <div class="cpn-title">
               配置面板
             </div>
+            <config-panel :curPickType="curPickType"></config-panel>
           </div>
         </el-col>
 
@@ -61,6 +62,7 @@
 <script>
 import { components } from '../components'
 import engine from '../fragments/renderEngine.vue'
+import configPanel from '../fragments/configPanel.vue'
 /* 
   可以考虑把渲染引擎、物料堆 都抽象到一个单独的库
   配置面板是一个库 --- 配置面板长时间不需要改动
@@ -88,24 +90,32 @@ export default {
           // }]
         }
       },
-      // 当前操作的数组
+      // 当前操作的数组（json协议）
       currentJson: {},
-      // 当前拾取的类型
-      selectedType: ''
+      // 物料堆当前拾取的类型
+      selectedType: '',
+      // 中间，被选中的类型
+      curPickType: ''
     }
   },
   components: {
     ...components,
-    renderEngine: engine
+    renderEngine: engine,
+    configPanel
   },
   methods: {
-    // 拾取被配置节点
+    // 拾取被配置节点，item就只是stacks里面的字符串
     handleDrag(item) {
       this.selectedType = item
     },
     handleDrop() {
       const _type = this.selectedType
-      this.components.push(_type)
+
+      this.components.push(_type) // mock时用到的
+    },
+    // 用户点击选中的节点
+    handlePickType(type) {
+      this.curPickType = type
     }
 
   },

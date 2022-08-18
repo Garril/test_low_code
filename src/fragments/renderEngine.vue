@@ -2,6 +2,15 @@
 import { components, parsers } from '../components'
 export default {
   name: 'renderEngine',
+  data() {
+    return {
+      page: undefined
+    }
+  },
+  components: {
+    ...components,
+    ...parsers
+  },
   props: {
     // 配置协议
     jsonSchema: {
@@ -16,15 +25,6 @@ export default {
       default: ''
     }
   },
-  data() {
-    return {
-      page: undefined
-    }
-  },
-  components: {
-    ...components,
-    ...parsers
-  },
   created() {
     this.init()
   },
@@ -33,10 +33,13 @@ export default {
       // 提取页面参数（单次--初始化）
       this.page = this.jsonSchema.page || {}
     },
+
+
     // 渲染根节点
     renderRoot(h) {
       let _page = this.page;
       // 丰富全局配置逻辑入口
+      
       return (
         <div class="root">
           { this.renderComponent(h, _page) }
@@ -59,6 +62,7 @@ export default {
     renderChildren(h, section) {
       let _nodeArray = section.children || [].concat(section)
       // 后期拓展兄弟节点之间的通信
+      
       return _nodeArray.map((node, index) => {
         return this.renderComponent(h, node, index);
       })
@@ -67,6 +71,7 @@ export default {
     // 开始渲染
     startRender(h, section, _children) {
       const _type = section.type
+      // 拿到转译过后的对应组件
       const renderMod = parsers[_type]
       // console.log(renderMod)
       
@@ -77,16 +82,22 @@ export default {
       console.log('startRender error: ',_type)
       return null
     },
+
+
+
     // 以下为配置系统统一化处理逻辑
     // 拖拽组件经过触发
     handleDragOver() {
-      console.log("renderdragover")
+      // console.log("renderdragover")
     },
-    // 拖拽组件松手
-    handleDrag(event, vm) {
-      const _json = vm.jsonSchema
+    // 拖拽组件松手 ---之后重新触发render函数
+    handleDrog(event, vm) {
+      // console.log(event, vm)
+      // console.log("handleDrog")
+      const _json = vm.jsonSchema // _json为当前组件被拖拽入的容器
       if(_json && _json.type === 'Container') {
-        // 没有孩子节点
+        // 可以找到当前容器的父亲 console.log(vm.$parent) 
+        // 没有孩子节点undefined,初始化为[]
         if(!_json.children) {
           this.$set(_json, 'children', [])
         }
@@ -100,7 +111,12 @@ export default {
 
   },
   render(h) {
+    /* console.log("h: ",h)
+      ƒ (a, b, c, d) { return createElement$1(vm, a, b, c, d, true); } */
     let _vode = this.renderRoot(h)
+    /* console.log("_vode: ",_vode)
+      VNode {tag: 'div', data: {…}, children: Array(1), text: undefined, elm: undefined, …} */
+    console.log("run render!");
     return _vode
   }
 }
